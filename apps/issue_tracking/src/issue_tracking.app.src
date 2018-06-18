@@ -4,8 +4,9 @@
   {registered, []},
   {mod, { issue_tracking_app, []}},
   {applications,
-   [kernel,
-    stdlib
+   [ kernel,
+    stdlib,
+    cowboy
    ]},
   {env,[]},
   {modules, []},
