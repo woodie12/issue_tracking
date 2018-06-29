@@ -4,13 +4,20 @@
   {registered, []},
   {mod, { issue_tracking_app, []}},
   {applications,
-   [ kernel,
+   [kernel,
     stdlib,
-    cowboy
+    cowboy,
+    crypto,
+    compiler,
+    lager,
+    jsx,
+    sha3,
+    hex,
+    jiffy,
+    mnesia
    ]},
   {env,[]},
   {modules, []},
-
   {maintainers, []},
   {licenses, ["Apache 2.0"]},
   {links, []}

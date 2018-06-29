@@ -8,36 +8,41 @@
 -behaviour(application).
 
 %% Application callbacks
--export([start/0, start/2, stop/1]).
+
 
 %%====================================================================
 %% API
 %%====================================================================
-start() ->
-    application:start(cowboy),
-    application:start(issue_tracking).
+
+
+%% Application callbacks
+-export([start/2
+    ,stop/1]).
+
+%%====================================================================
+%% API
+%%====================================================================
 
 start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
-        {'_',
-            [
-                {"/issue/list", issue_handler, [{op,list}]},
-                {"/issue/:issue_id", issue_handler, [{op,get}]},
-                {"/issue/create", issue_handler, [{op, create}]},
-                {"/issue/update/:issue_id", issue_handler, [{op, update}]},
-                {"/issue/delete/:issue_id", issue_handler, [{op, delete}]}
-            ]}
+        %% {HostMatch, list({PathMatch, Handler, Opts})}
+        {'_', [
+            {"/", top_handler, []},
+            {"/issues/:issueid", handler_emp_get, []},
+            {"/issues/add", handler_emp_add, []},
+            {"/issues_delete/:issueid", handler_emp_delete, []}
+        ]}
     ]),
-    cowboy:start_listener(my_http_listener, 1,
-        cowboy_tcp_transport, [{port, 8080}],
-        cowboy_http_protocol, [{dispatch, Dispatch}]
-    ).
-
+    %% Name, NbAcceptors, TransOpts, ProtoOpts
+    {ok, _} = cowboy:start_clear(my_http_listener,
+        [{port, 8080}],
+        #{env => #{dispatch => Dispatch}}
+    ),
+    'issue_tracking_sup':start_link().
 
 %%--------------------------------------------------------------------
 stop(_State) ->
-    application:stop(cowboy).
-
+    ok.
 %%====================================================================
 %% Internal functions
 %%====================================================================
