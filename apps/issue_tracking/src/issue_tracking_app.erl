@@ -28,6 +28,7 @@ start(_StartType, _StartArgs) ->
         %% {HostMatch, list({PathMatch, Handler, Opts})}
         {'_', [
             {"/", top_handler, []},
+            {"/issues", handle_list, []},
             {"/issues/:issueid", handler_emp_get, []},
             {"/issues/add", handler_emp_add, []},
             {"/issues_delete/:issueid", handler_emp_delete, []}

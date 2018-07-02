@@ -21,7 +21,7 @@ init(_Type, Req, _State) ->
 
 handle(Req, _State) ->
   {ID, _Req} = cowboy_req:binding(issueid, Req),
-  {ok, Payload} = gen_server:call(rest_api, {get_issue, binary_to_integer(ID)}),
+  {ok, Payload} = gen_server:call(issue_tracking_api, {get_issue, binary_to_integer(ID)}),
   {ok, Req2} = cowboy_req:reply(200,
     [{<<"content-type">>, <<"application/json">>}],
     Payload,

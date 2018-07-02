@@ -23,6 +23,7 @@
   code_change/3]).
 
 -define(SERVER, ?MODULE).
+-define(IMPLEMENTATION_MODULE, ?MODULE).
 
 -record(state, {}).
 
@@ -39,7 +40,7 @@
 -spec start_link() -> {ok, pid()}.
 
 start_link() ->
-  gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+  gen_server:start_link({local, ?SERVER}, ?IMPLEMENTATION_MODULE, [], []).
 
 %%%===================================================================
 %%% gen_server callbacks
@@ -86,7 +87,7 @@ init([]) ->
 %%  {reply, ok, State}.
 
 handle_call({get_issues, ID}, _From, State) ->
-  {ok, Issues} = rest_db:get_issues(ID),
+  {ok, Issues} = issue_db:get_issues(ID),
   Reply = {ok, jsx:encode(Issues)},
   {reply, Reply, State};
 
@@ -96,7 +97,7 @@ handle_call({update_issues, ID, Issue}, _From, State) ->
   First = maps:get(<<"first">>, IssDecoded),
   Middle = maps:get(<<"middle">>, IssDecoded),
   Last = maps:get(<<"last">>, IssDecoded),
-  {ok, IssNew} = rest_db:update_issues(ID, First, Middle, Last),
+  {ok, IssNew} = issue_db:update_issues(ID, First, Middle, Last),
   Reply = {ok, jsx:encode(IssNew)},
   {reply, Reply, State};
 

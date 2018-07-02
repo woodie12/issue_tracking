@@ -24,7 +24,7 @@ handle(Req, _State) ->
 respond(Req, ID, true) ->
   {ok, Body, _Req} = cowboy_req:body(Req),
   io:format("BODY: ~p~n", [Body]),
-  {ok, Payload} = gen_server:call(rest_api, {update_issue, binary_to_integer(ID), Body}),
+  {ok, Payload} = gen_server:call(issue_tracking_api, {update_issue, binary_to_integer(ID), Body}),
   {ok, ReqNew} = cowboy_req:reply(200,
     [{<<"content-type">>, <<"application/json">>},
       {<<"Access-Control-Allow-Origin">>, <<"*">>}], % chrome security
@@ -34,7 +34,7 @@ respond(Req, ID, true) ->
   {ok, ReqNew, []};
 
 respond(Req, ID, false) ->
-  {ok, Payload} = gen_server:call(rest_api, {get_issue, binary_to_integer(ID)}),
+  {ok, Payload} = gen_server:call(issue_tracking_api, {get_issue, binary_to_integer(ID)}),
   {ok, ReqNew} = cowboy_req:reply(200,
     [{<<"content-type">>, <<"application/json">>}],
     Payload,
