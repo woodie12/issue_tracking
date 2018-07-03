@@ -18,7 +18,10 @@
           create_user/1,
           update_user/2,
           get_user/1,
-          delete_user/1]).
+          delete_user/1,
+          create_issue/2,
+          update_issue/3,
+          delete_issue/1]).
 
 %%% issue crud functions
 initial_setup() ->
@@ -56,11 +59,11 @@ create_tables() ->
 
 
 
-get_issueid() ->
-  [Item] = mnesia:read( id, employee, read ),
-  N = Item#id.value,
-  mnesia:write( Item#id{value = N + 1} ),
-  N.
+%%get_userid() ->
+%%  [Item] = mnesia:read( id, employee, read ),
+%%  N = Item#id.value,
+%%  mnesia:write( Item#id{value = N + 1} ),
+%%  N.
 
 create_user(Username) ->
   User = ensure_list(Username),
@@ -138,6 +141,59 @@ user_to_map(User) ->
       <<"username">> => list_to_binary(User#user.username)
     }
   end.
+
+%% TODO: add issue id
+get_issueid() ->
+%%  check wheter write read in the righr way
+  [Item] = mnesia:read(id, issue, read),
+  N = Item#id.value,
+  mnesia:write(Item#id{ value = N + 1}),
+  N.
+
+create_issue(Title, Content) ->
+  {atomic, Issue} = mnesia:transaction( fun() ->
+    NextID = get_issueid(),
+    New = #issue{ id = NextID,
+                  title= Title,
+                  content = Content
+      },
+    mneisa:write(New),
+    New
+                                        end
+  ),
+  {ok, Issue}.
+
+
+get_issue(Id) ->
+  {atomic, Issue} = mnesia:transaction( fun() ->
+    case mnesia:read(location, Id, read) of
+      [Item] -> Item;
+      []->[]
+    end
+                                           end
+  ),
+  {ok, Issue}.
+
+update_issue(Id, Title, Content) ->
+  {atomic, Issue} = mnesia:transaction(
+    fun() ->
+      New = #issue{
+        id = Id,
+        title = Title,
+        content = Content
+      },
+      mnesia:write(New),
+      New
+    end
+  ),
+  {ok, Issue}.
+
+delete_issue(Id) ->
+  {ok, Issue} = get_issue(Id),
+  mnesia:transaction(fun() -> mnesia:delete_object(Issue)
+                     end).
+
+
 
 
 

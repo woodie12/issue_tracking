@@ -18,7 +18,7 @@ init(_Type, Req, _State) ->
   {ok, Req, []}.
 
 handle(Req, _State) ->
-  {ID, _Req} = cowboy_req:binding(issuepid, Req),
+  {ID, _Req} = cowboy_req:binding(issueid, Req),
   respond(Req, ID, cowboy_req:has_body(Req)).
 
 respond(Req, ID, true) ->
