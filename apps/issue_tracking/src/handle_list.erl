@@ -4,9 +4,10 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created : 26. Jun 2018 11:08 AM
+%%% Created : 05. Jul 2018 12:48 PM
 %%%-------------------------------------------------------------------
--module(handle_get).
+-module(handle_list).
+-author("wan").
 -behaviour(cowboy_http_handler).
 
 %% API
@@ -20,8 +21,7 @@ init(_Type, Req, _State) ->
   {ok, Req, []}.
 
 handle(Req, _State) ->
-  {ID, _Req} = cowboy_req:binding(issueid, Req),
-  {ok, Payload} = gen_server:call(issue_tracking_api, {get_issue, binary_to_integer(ID)}),
+  {ok, Payload} = gen_server:call(issue_tracking_api, {get_list}),
   {ok, Req2} = cowboy_req:reply(200,
     [{<<"content-type">>, <<"application/json">>}],
     Payload,
@@ -35,3 +35,4 @@ handle(Req, _State) ->
 
 terminate(_Reason, _Req, _State) ->
   ok.
+%% API

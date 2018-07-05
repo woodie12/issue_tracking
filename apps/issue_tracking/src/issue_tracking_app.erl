@@ -27,9 +27,13 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         %% {HostMatch, list({PathMatch, Handler, Opts})}
         {'_', [
-            {"/", top_handler, []},
-            {"/issues", handle_list, []},
-            {"/issues/:issueid", handler_emp_get, []},
+            {"/issues", issue_handler, [list]},
+            {"/issues/add", issue_handler, [add]},
+            {"/get/:issueid", issue_handler,[get]},
+            {"/update/:issueid", issue_handler, [update]},
+            {"/delete/:issueid", issue_handler,[delete]},
+            {"/issues/list", handle_list, []},
+            {"/issues/:issueid", handle_get, []},
             {"/issues/add", handler_emp_add, []},
             {"/issues_delete/:issueid", handler_emp_delete, []}
         ]}

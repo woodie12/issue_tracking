@@ -18,6 +18,7 @@
           create_user/1,
           update_user/2,
           get_user/1,
+          get_issue/0,
           delete_user/1,
           create_issue/2,
           update_issue/3,
@@ -142,6 +143,12 @@ user_to_map(User) ->
     }
   end.
 
+%% get the list of the issues.
+get_issue() ->
+  {atomic, List} = mnesia:transaction(fun()-> qlc:e(mnesia:table(issue)) end),
+  {ok, List}.
+
+
 %% TODO: add issue id
 get_issueid() ->
 %%  check wheter write read in the righr way
@@ -192,6 +199,7 @@ delete_issue(Id) ->
   {ok, Issue} = get_issue(Id),
   mnesia:transaction(fun() -> mnesia:delete_object(Issue)
                      end).
+
 
 
 

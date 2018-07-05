@@ -94,12 +94,21 @@ handle_call({get_issues, ID}, _From, State) ->
 
 handle_call({update_issues, ID, Issue}, _From, State) ->
   IssDecoded = jsx:decode(Issue, [return_maps]),
-  First = maps:get(<<"first">>, IssDecoded),
-  Middle = maps:get(<<"middle">>, IssDecoded),
-  Last = maps:get(<<"last">>, IssDecoded),
-  {ok, IssNew} = issue_db:update_issues(ID, First, Middle, Last),
+  Id = maps:get(<<"id">>, IssDecoded),
+  Title = maps:get(<<"title">>, IssDecoded),
+  Content = maps:get(<<"content">>, IssDecoded),
+  {ok, IssNew} = issue_db:update_issues(ID, Id, Title, Content),
   Reply = {ok, jsx:encode(IssNew)},
   {reply, Reply, State};
+
+
+%%get list for database
+handle_call({get_list},_From, State) ->
+  {ok, List} = issue_db:get_issue(),
+  List2 = lists:map(fun erlang:tuple_to_list/1, List),
+  Reply = {ok, jsx:encode(List2)},
+  {reply, Reply, State};
+
 
 handle_call(_Request, _From, State) ->
   Reply = unknown,
@@ -152,6 +161,7 @@ handle_info(_Info, State) ->
     State :: #state{}) -> term()).
 terminate(_Reason, _State) ->
   ok.
+
 
 
 %%--------------------------------------------------------------------
