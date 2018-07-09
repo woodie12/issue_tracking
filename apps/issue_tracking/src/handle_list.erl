@@ -17,8 +17,10 @@
 -export([terminate/3]).
 
 
-init(_Type, Req, _State) ->
+init(_Type, Req, _Opts) ->
   {ok, Req, []}.
+
+
 
 handle(Req, _State) ->
   {ok, Payload} = gen_server:call(issue_tracking_api, {get_list}),
@@ -28,8 +30,6 @@ handle(Req, _State) ->
     Req
   ),
   {ok, Req2, []}.
-
-
 
 
 

@@ -18,7 +18,6 @@
 -record(issue, {
               id,
               title,
-              post_time,
               content,
               reply
             }).

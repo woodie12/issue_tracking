@@ -1,11 +1,10 @@
-{"1.1.0",
 [{<<"cowboy">>,
   {git,"https://github.com/ninenines/cowboy.git",
-       {ref,"a76c32db5e32ab6a6b35ce6625cb3aedcac067b6"}},
+       {ref,"d08c2ab39d38c181abda279d5c2cadfac33a50c1"}},
   0},
  {<<"cowlib">>,
-  {git,"https://github.com/ninenines/cowlib",
-       {ref,"93b2b897cde238506c803faad4d1602d79dba7c9"}},
+  {git,"https://github.com/ninenines/cowlib.git",
+       {ref,"d544a494af4dbc810fc9c15eaf5cc050cced1501"}},
   1},
  {<<"goldrush">>,
   {git,"https://github.com/basho/goldrush.git",
@@ -19,20 +18,19 @@
   {git,"https://github.com/davisp/jiffy.git",
        {ref,"ee8b48cb448a999e1fddbb5e2e32e7dfe33acf5c"}},
   0},
- {<<"jsx">>,{pkg,<<"jsx">>,<<"2.6.2">>},0},
+ {<<"jsx">>,
+  {git,"git://github.com/talentdeficit/jsx.git",
+       {ref,"d011411c23e9f8c29d98aa1b7a50ddf9709b6a60"}},
+  0},
  {<<"lager">>,
   {git,"git://github.com/basho/lager.git",
        {ref,"81eaef0ce98fdbf64ab95665e3bc2ec4b24c7dac"}},
   0},
  {<<"ranch">>,
-  {git,"https://github.com/ninenines/ranch",
-       {ref,"8eaae552ec520605b7f4b0e5943256d2b5e3621c"}},
+  {git,"https://github.com/ninenines/ranch.git",
+       {ref,"adf1822defc2b7cfdc7aca112adabfa1d614043c"}},
   1},
  {<<"sha3">>,
   {git,"https://github.com/b/sha3.git",
        {ref,"3acde27713f4b028136556e51a95f0146a691f1b"}},
-  0}]}.
-[
-{pkg_hash,[
- {<<"jsx">>, <<"213721E058DA0587A4BCE3CC8A00FF6684CED229C8F9223245C6FF2C88FBAA5A">>}]}
-].
+  0}].

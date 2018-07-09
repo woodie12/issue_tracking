@@ -19,6 +19,8 @@
           update_user/2,
           get_user/1,
           get_issue/0,
+          get_issues/1,
+          add_issues/3,
           delete_user/1,
           create_issue/2,
           update_issue/3,
@@ -145,8 +147,19 @@ user_to_map(User) ->
 
 %% get the list of the issues.
 get_issue() ->
-  {atomic, List} = mnesia:transaction(fun()-> qlc:e(mnesia:table(issue)) end),
-  {ok, List}.
+  io:format("hello there"),
+  Fun = fun() ->
+    mnesia:all_keys(user)
+        end,
+  Lookup = mnesia:transaction(Fun),
+  case Lookup of
+    {atomic, Issues} ->
+      io:format("~p~n",[Issues]);
+    _ ->
+      io:format("fuck in getting all users~n"),
+      Issues=[]
+  end,
+  {ok, Issues}.
 
 
 %% TODO: add issue id
@@ -171,7 +184,7 @@ create_issue(Title, Content) ->
   {ok, Issue}.
 
 
-get_issue(Id) ->
+get_issues(Id) ->
   {atomic, Issue} = mnesia:transaction( fun() ->
     case mnesia:read(location, Id, read) of
       [Item] -> Item;
@@ -196,11 +209,23 @@ update_issue(Id, Title, Content) ->
   {ok, Issue}.
 
 delete_issue(Id) ->
-  {ok, Issue} = get_issue(Id),
+  {ok, Issue} = get_issues(Id),
   mnesia:transaction(fun() -> mnesia:delete_object(Issue)
                      end).
 
-
+add_issues(Id, Title, Content) ->
+  {atomic, Issue} = mnesia:transaction(
+    fun() ->
+      New = #issue{
+        id = Id,
+        title = Title,
+        content = Content
+      },
+      nbesia:write(New),
+      New
+    end
+  ),
+  {ok, Issue}.
 
 
 

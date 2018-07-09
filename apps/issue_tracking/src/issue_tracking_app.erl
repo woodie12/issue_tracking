@@ -35,16 +35,17 @@ start(_StartType, _StartArgs) ->
 
             {"/issues/list", handle_list, []},
             {"/issues/:issueid", handle_get, []},
-            {"/issues/add", handler_set, []},
-            {"/issues_delete/:issueid", handler_emp_delete, []}
+            {"/issues/add", handle_set, []},
+            {"/issues_delete/:issueid", handler_delete, []}
         ]}
     ]),
     %% Name, NbAcceptors, TransOpts, ProtoOpts
-    {ok, _} = cowboy:start_clear(my_http_listener,
+    {ok, _} = cowboy:start_http(my_http_listener, 100,
         [{port, 8080}],
-        #{env => #{dispatch => Dispatch}}
+        [{env, [{dispatch, Dispatch}]}]
     ),
     'issue_tracking_sup':start_link().
+
 
 %%--------------------------------------------------------------------
 stop(_State) ->

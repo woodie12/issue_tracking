@@ -87,24 +87,33 @@ init([]) ->
 %%  {reply, ok, State}.
 
 handle_call({get_issues, ID}, _From, State) ->
-  {ok, Issues} = issue_db:get_issues(ID),
+  {ok, Issues} = issues_db:get_issues(ID),
   Reply = {ok, jsx:encode(Issues)},
   {reply, Reply, State};
 
 
 handle_call({update_issues, ID, Issue}, _From, State) ->
   IssDecoded = jsx:decode(Issue, [return_maps]),
-  Id = maps:get(<<"id">>, IssDecoded),
   Title = maps:get(<<"title">>, IssDecoded),
   Content = maps:get(<<"content">>, IssDecoded),
-  {ok, IssNew} = issue_db:update_issues(ID, Id, Title, Content),
+  {ok, IssNew} = issues_db:update_issues(ID, Title, Content),
   Reply = {ok, jsx:encode(IssNew)},
   {reply, Reply, State};
 
 
+
+handle_call({add_issues, ID, Issue}, _From, State) ->
+%%  TODO: add create time and modified time in post and update!!!!!
+  IssDecoded = jsx:decode(Issue, [return_maps]),
+  Title = maps:get(<<"title">>, IssDecoded),
+  Content = maps:get(<<"content">>, IssDecoded),
+  {ok, IssNew} = issues_db:add_issues(ID, Title, Content),
+  Reply = {ok, jsx:encode(IssNew)},
+  {reply, Reply, State};
+
 %%get list for database
 handle_call({get_list},_From, State) ->
-  {ok, List} = issue_db:get_issue(),
+  {ok, List} = issues_db:get_issue(),
   List2 = lists:map(fun erlang:tuple_to_list/1, List),
   Reply = {ok, jsx:encode(List2)},
   {reply, Reply, State};
