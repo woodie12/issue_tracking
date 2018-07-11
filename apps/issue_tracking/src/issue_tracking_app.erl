@@ -24,6 +24,7 @@
 %%====================================================================
 
 start(_StartType, _StartArgs) ->
+
     Dispatch = cowboy_router:compile([
         %% {HostMatch, list({PathMatch, Handler, Opts})}
         {'_', [
@@ -34,8 +35,8 @@ start(_StartType, _StartArgs) ->
 %%            {"/delete/:issueid", issue_handler,[delete]},
 
             {"/issues/list", handle_list, []},
+            {"/issues_set/add", handle_set, []},
             {"/issues/:issueid", handle_get, []},
-            {"/issues/add", handle_set, []},
             {"/issues_delete/:issueid", handler_delete, []}
         ]}
     ]),
@@ -44,11 +45,13 @@ start(_StartType, _StartArgs) ->
         [{port, 8080}],
         [{env, [{dispatch, Dispatch}]}]
     ),
-    'issue_tracking_sup':start_link().
+    issues_db:initial_setup(),
+    issue_tracking_sup:start_link().
 
 
 %%--------------------------------------------------------------------
 stop(_State) ->
+
     ok.
 %%====================================================================
 %% Internal functions

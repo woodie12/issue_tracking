@@ -18,8 +18,8 @@
 -record(issue, {
               id,
               title,
-              content,
-              reply
+              content
+%%              reply
             }).
 
 -record(connection, {

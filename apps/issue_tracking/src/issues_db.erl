@@ -24,40 +24,44 @@
           delete_user/1,
           create_issue/2,
           update_issue/3,
-          delete_issue/1]).
+          delete_issue/1,
+          delete_record/2]).
 
 %%% issue crud functions
 initial_setup() ->
+  application:set_env(mnesia,dir,"/db"),
   mnesia:create_schema([node()]),
   mnesia:start(),
   create_tables().
 
 
 create_tables() ->
+
   mnesia:create_table(user,
     [{type, ordered_set},
-      {disc_copies, [node()]},
+%%      {disc_copies, [node()]},
       {attributes, record_info(fields, user)}]),
 
-  mnesia:create_table(issue,
+%%  mnesia:create_table(issue,
+%%    [{type, ordered_set},
+%%%%      {disc_copies, [node()]},
+%%      {attributes, record_info(fields, issue)}]),
+  io:format("created table !!!!! ~p",
+    [ mnesia:create_table(issue,
     [{type, ordered_set},
-      {disc_copies, [node()]},
-      {attributes, record_info(fields, issue)}]),
+%%      {disc_copies, [node()]},
+      {attributes, record_info(fields, issue)}])]),
 
   mnesia:create_table(connection,
     [{type, bag},
-      {disc_copies, [node()]},
+%%      {disc_copies, [node()]},
       {attributes, record_info(fields, connection)}]),
+  mnesia:info(),
+%%  mnesia:create_table(id,
+%%    [{type, ordered_set},
+%%      {disc_copies, [node()]},
+%%      {attributes, record_info(fields, id)}]),
 
-  mnesia:create_table(id,
-    [{type, ordered_set},
-      {disc_copies, [node()]},
-      {attributes, record_info(fields, id)}]),
-
-  mnesia:dirty_write(#id{ type = user,
-    value = 1 }),
-  mnesia:dirty_write(#id{ type = issue,
-    value = 1 }),
   ok.
 
 
@@ -145,11 +149,16 @@ user_to_map(User) ->
     }
   end.
 
+
+
+
+%%
+%%TODO: all_keys(issue) return an list of issue ID, but we need to get all the record, see how to do this
 %% get the list of the issues.
 get_issue() ->
   io:format("hello there"),
   Fun = fun() ->
-    mnesia:all_keys(user)
+    mnesia:all_keys(issue)
         end,
   Lookup = mnesia:transaction(Fun),
   case Lookup of
@@ -159,6 +168,7 @@ get_issue() ->
       io:format("fuck in getting all users~n"),
       Issues=[]
   end,
+%%  TODO: ISSUES IS A VALUE, FIND A WAY TO RETURN THE WHOLE MAP TO ISSUE_TRACKING_API
   {ok, Issues}.
 
 
@@ -186,13 +196,13 @@ create_issue(Title, Content) ->
 
 get_issues(Id) ->
   {atomic, Issue} = mnesia:transaction( fun() ->
-    case mnesia:read(location, Id, read) of
+    case mnesia:read(issue, Id, read) of
       [Item] -> Item;
       []->[]
     end
                                            end
   ),
-  {ok, Issue}.
+  {ok, iss_to_map(Issue)}.
 
 update_issue(Id, Title, Content) ->
   {atomic, Issue} = mnesia:transaction(
@@ -213,23 +223,52 @@ delete_issue(Id) ->
   mnesia:transaction(fun() -> mnesia:delete_object(Issue)
                      end).
 
+iss_to_map(I) ->
+  case I of
+    [] -> #{};
+    _ -> #{
+      <<"id">> => I#issue.id,
+      <<"title">> => I#issue.title,
+      <<"middle">> => I#issue.content
+%%      <<"created">> => E#employee.created,
+%%      <<"modified">> => E#employee.modified
+    }
+  end.
+
+
 add_issues(Id, Title, Content) ->
   {atomic, Issue} = mnesia:transaction(
+%%    io:format("i love zhuyilong", [Id,Title,Content]),
     fun() ->
       New = #issue{
         id = Id,
         title = Title,
         content = Content
       },
-      nbesia:write(New),
+
+      io:format("result~p",[mnesia:write(New)]),
       New
     end
   ),
-  {ok, Issue}.
+  io:format("------ issue is ------, ~p", [Issue]),
+  {ok, iss_to_map(Issue)}.
 
 
 
 
+delete_record(Table,Key) ->
+  Fun = fun() ->
+    mnesia:delete({Table,Key})
+        end,
+  Lookup = mnesia:transaction(Fun),
+  case Lookup of
+    {atomic,[]} ->
+      not_exist;
+    {atomic,ok} ->
+      deleted;
+    _ ->
+      nopes
+  end.
 
 
 

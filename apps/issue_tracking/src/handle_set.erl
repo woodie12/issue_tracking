@@ -13,6 +13,12 @@
 -export([handle/2]).
 -export([terminate/3]).
 
+
+-export([
+  allowed_methods/2,
+  content_types_accepted/2,
+  content_types_provided/2
+]).
 %% API
 init(_Type, Req, _State) ->
   io:format("-----!!-----enter the post-----!!------"),
@@ -67,19 +73,35 @@ new_issue_id(Bin, Rem) ->
   Next = rand:uniform(62) - 1,
   new_issue_id(<<Bin/binary, Next>>, Rem - 1).
 
+allowed_methods(Req, State) ->
+  lager:debug("allowed_methods"),
+  {[<<"GET">>, <<"POST">>], Req, State}.
+
+content_types_accepted(Req, State) ->
+  lager:debug("content_types_accepted"),
+  {[
+    {{<<"application">>, <<"json">>, []}, post_json}
+  ], Req, State}.
+
+content_types_provided(Req, State) ->
+  lager:debug("content_types_provided"),
+  {[
+    {{<<"application">>, <<"json">>, []}, get_json}
+  ], Req, State}.
+
 
 respond(Req, true) ->
-  ID = new_issue_id(),
-  in:format("ID is ~p",[ID]),
+  ID = rand:uniform(999999),
+%%  in:format("ID is ~n",[ID]),
   {ok, Body, _Req} = cowboy_req:body(Req),
-  io:format("BODY: ~p~n", [Body]),
-  {ok, Payload} = gen_server:call(issue_tracking_api, {add_issues, binary_to_integer(ID), Body}),
+  {ok, Payload} = gen_server:call(issue_tracking_api, {add_issues, ID, Body}),
   {ok, ReqNew} = cowboy_req:reply(200,
-    [{<<"content-type">>, <<"application/json">>},
-      {<<"Access-Control-Allow-Origin">>, <<"*">>}], % chrome security
+    [{<<"content-type">>, <<"application/json">>}], % chrome security
     Payload,
     Req
   ),
+  io:format("---333----~p",[ReqNew]),
+
   {ok, ReqNew, []};
 
 respond(Req, false) ->

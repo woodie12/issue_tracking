@@ -102,19 +102,25 @@ handle_call({update_issues, ID, Issue}, _From, State) ->
 
 
 
-handle_call({add_issues, ID, Issue}, _From, State) ->
+handle_call({add_issues, Id, Issue}, _From, State) ->
 %%  TODO: add create time and modified time in post and update!!!!!
+  io:format("Issue is ~p", [binary_to_list(Issue)]),
   IssDecoded = jsx:decode(Issue, [return_maps]),
   Title = maps:get(<<"title">>, IssDecoded),
+  io:format("title is ~p",[Title]),
+
   Content = maps:get(<<"content">>, IssDecoded),
-  {ok, IssNew} = issues_db:add_issues(ID, Title, Content),
+  {ok, IssNew} = issues_db:add_issues(Id, Title, Content),
+  io:format("-----000----issnew is ~p",[jsx:encode(IssNew)]),
   Reply = {ok, jsx:encode(IssNew)},
   {reply, Reply, State};
 
 %%get list for database
 handle_call({get_list},_From, State) ->
   {ok, List} = issues_db:get_issue(),
+  io:format("===List1 is ==~p",[List]),
   List2 = lists:map(fun erlang:tuple_to_list/1, List),
+  io:format("===List 2is ==~p",[List2]),
   Reply = {ok, jsx:encode(List2)},
   {reply, Reply, State};
 

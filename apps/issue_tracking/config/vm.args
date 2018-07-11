@@ -5,4 +5,4 @@
 +K true
 +A30
 
--mnesia dir '"./src/issues_db"'
+-mnesia dir '"../src/db"'
