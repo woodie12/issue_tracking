@@ -100,6 +100,10 @@ handle_call({update_issues, ID, Issue}, _From, State) ->
   Reply = {ok, jsx:encode(IssNew)},
   {reply, Reply, State};
 
+handle_call({delete_issues, Id},_From, State) ->
+  {ok, Issues} = issues_db:delete_issues(Id),
+  Reply = {ok, jsx:encode(Issues)},
+  {reply, Reply, State};
 
 
 handle_call({add_issues, Id, Issue}, _From, State) ->
@@ -119,9 +123,10 @@ handle_call({add_issues, Id, Issue}, _From, State) ->
 handle_call({get_list},_From, State) ->
   {ok, List} = issues_db:get_issue(),
   io:format("===List1 is ==~p",[List]),
-  List2 = lists:map(fun erlang:tuple_to_list/1, List),
-  io:format("===List 2is ==~p",[List2]),
-  Reply = {ok, jsx:encode(List2)},
+%%  List2 = lists:map(fun erlang:tuple_to_list/1, List),
+  io:format("===List 2is ==~p",[List]),
+  Reply = {ok, jsx:encode(List)},
+
   {reply, Reply, State};
 
 

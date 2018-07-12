@@ -24,7 +24,7 @@
           delete_user/1,
           create_issue/2,
           update_issue/3,
-          delete_issue/1,
+          delete_issues/1,
           delete_record/2]).
 
 %%% issue crud functions
@@ -158,7 +158,9 @@ user_to_map(User) ->
 get_issue() ->
   io:format("hello there"),
   Fun = fun() ->
-    mnesia:all_keys(issue)
+%%    mnesia:all_keys(issue)
+
+    mnesia:foldl(fun(X, Acc) -> [iss_to_map(X)|Acc] end, [], issue)
         end,
   Lookup = mnesia:transaction(Fun),
   case Lookup of
@@ -169,8 +171,16 @@ get_issue() ->
       Issues=[]
   end,
 %%  TODO: ISSUES IS A VALUE, FIND A WAY TO RETURN THE WHOLE MAP TO ISSUE_TRACKING_API
+%%  Result = issue_to_list(Issues),
+%%  io:format("aaaaaaazhuyilongaaaaa~p",[Result]),
   {ok, Issues}.
 
+%%[(Item)||{Item,Unit}<-Shoppinglist, Item<-[apples,milk]].
+%%[apples,milk,apples,milk,apples,milk]
+%%
+%%issue_to_list(Issues) ->
+%%  Res = lists:map(fun({Issue}) -> [#issue{x = X}] = mnesia:dirty_read({issue, Issue}), X end, Issues),
+%%  lists:flatten(Res).
 
 %% TODO: add issue id
 get_issueid() ->
@@ -196,12 +206,13 @@ create_issue(Title, Content) ->
 
 get_issues(Id) ->
   {atomic, Issue} = mnesia:transaction( fun() ->
-    case mnesia:read(issue, Id, read) of
+    case mnesia:read(issue,  Id) of
       [Item] -> Item;
       []->[]
     end
                                            end
   ),
+  io:format("1234---enter get issue id , issue is ~p~n", [Issue]),
   {ok, iss_to_map(Issue)}.
 
 update_issue(Id, Title, Content) ->
@@ -218,10 +229,29 @@ update_issue(Id, Title, Content) ->
   ),
   {ok, Issue}.
 
-delete_issue(Id) ->
-  {ok, Issue} = get_issues(Id),
-  mnesia:transaction(fun() -> mnesia:delete_object(Issue)
-                     end).
+
+
+delete_issues(Id) ->
+%%  =========failed try.==========
+%%  {ok, Issue} = get_issues(Id),
+%%  io:format("title is ~p, content is ~p", [maps:get(<<"title">>,Issue)],[maps:get(<<"content">>, Issue)]),
+%%  Delete=#issue{id = Id, title = maps:get(<<"title">>, Issue), content = maps:get(<<"content">>, Issue)},
+%%  io:format("hahahahaha ~p",[mnesia:transaction(fun() -> mnesia:delete_object(issue, Delete)
+%%                     end)]),
+
+  Fun = fun() ->
+    mnesia:delete({issue,Id})
+        end,
+  Lookup = mnesia:transaction(Fun),
+  case Lookup of
+    {atomic,[]} ->
+      not_exist;
+    {atomic,ok} ->
+      deleted;
+    _ ->
+      nopes
+  end,
+  {ok,Lookup}.
 
 iss_to_map(I) ->
   case I of
@@ -256,19 +286,6 @@ add_issues(Id, Title, Content) ->
 
 
 
-delete_record(Table,Key) ->
-  Fun = fun() ->
-    mnesia:delete({Table,Key})
-        end,
-  Lookup = mnesia:transaction(Fun),
-  case Lookup of
-    {atomic,[]} ->
-      not_exist;
-    {atomic,ok} ->
-      deleted;
-    _ ->
-      nopes
-  end.
 
 
 

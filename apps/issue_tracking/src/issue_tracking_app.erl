@@ -37,7 +37,7 @@ start(_StartType, _StartArgs) ->
             {"/issues/list", handle_list, []},
             {"/issues_set/add", handle_set, []},
             {"/issues/:issueid", handle_get, []},
-            {"/issues_delete/:issueid", handler_delete, []}
+            {"/issues_delete/:issueid", handle_delete, []}
         ]}
     ]),
     %% Name, NbAcceptors, TransOpts, ProtoOpts
