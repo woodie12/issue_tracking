@@ -26,7 +26,7 @@ init(_Type, Req, _State) ->
 
 handle(Req, _State) ->
 %%  {ID, _Req} = cowboy_req:binding(issueid, Req),
-  io:format("----------enter the post-----------"),
+  io:format("----------enter the post-----------~p",[Req]),
   respond(Req, cowboy_req:has_body(Req)).
 
 %%
@@ -94,9 +94,10 @@ respond(Req, true) ->
   ID = rand:uniform(999999),
 %%  in:format("ID is ~n",[ID]),
   {ok, Body, _Req} = cowboy_req:body(Req),
+  io:format("---oooooooooooooooooooooooooooo----~p",[Body]),
   {ok, Payload} = gen_server:call(issue_tracking_api, {add_issues, ID, Body}),
   {ok, ReqNew} = cowboy_req:reply(200,
-    [{<<"content-type">>, <<"application/json">>}], % chrome security
+    [{<<"content-type">>, <<"application/json">>},{<<"Access-Control-Allow-Origin">>, <<"*">>}], % chrome security
     Payload,
     Req
   ),

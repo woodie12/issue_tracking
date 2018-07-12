@@ -27,7 +27,7 @@ handle(Req, _State) ->
   io:format("enter delete    id is ~p", [binary_to_integer(ID)]),
   {ok, Payload} = gen_server:call(issue_tracking_api, {delete_issues, binary_to_integer(ID)}),
   {ok, Req2} = cowboy_req:reply(200,
-    [{<<"content-type">>, <<"application/json">>}],
+    [{<<"content-type">>, <<"application/json">>},{<<"Access-Control-Allow-Origin">>, <<"*">>}],
     Payload,
     Req
   ),

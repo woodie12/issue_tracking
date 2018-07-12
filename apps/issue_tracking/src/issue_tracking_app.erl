@@ -36,7 +36,7 @@ start(_StartType, _StartArgs) ->
     ]),
     %% Name, NbAcceptors, TransOpts, ProtoOpts
     {ok, _} = cowboy:start_http(my_http_listener, 100,
-        [{port, 8080}],
+        [{port, 3000}],
         [{env, [{dispatch, Dispatch}]}]
     ),
     issues_db:initial_setup(),

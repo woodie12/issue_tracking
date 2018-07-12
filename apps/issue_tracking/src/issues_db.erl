@@ -24,8 +24,8 @@
           delete_user/1,
           create_issue/2,
           update_issue/3,
-          delete_issues/1,
-          delete_record/2]).
+          delete_issues/1
+          ]).
 
 %%% issue crud functions
 initial_setup() ->
@@ -66,11 +66,7 @@ create_tables() ->
 
 
 
-%%get_userid() ->
-%%  [Item] = mnesia:read( id, employee, read ),
-%%  N = Item#id.value,
-%%  mnesia:write( Item#id{value = N + 1} ),
-%%  N.
+
 
 create_user(Username) ->
   User = ensure_list(Username),
@@ -216,12 +212,14 @@ get_issues(Id) ->
   {ok, iss_to_map(Issue)}.
 
 update_issue(Id, Title, Content) ->
+  Timestamp = erlang:system_time(),
   {atomic, Issue} = mnesia:transaction(
     fun() ->
       New = #issue{
         id = Id,
         title = Title,
-        content = Content
+        content = Content,
+        created = Timestamp
       },
       mnesia:write(New),
       New
@@ -259,7 +257,7 @@ iss_to_map(I) ->
     _ -> #{
       <<"id">> => I#issue.id,
       <<"title">> => I#issue.title,
-      <<"middle">> => I#issue.content
+      <<"content">> => I#issue.content
 %%      <<"created">> => E#employee.created,
 %%      <<"modified">> => E#employee.modified
     }

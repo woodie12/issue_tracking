@@ -25,7 +25,7 @@ init(_Type, Req, _Opts) ->
 handle(Req, _State) ->
   {ok, Payload} = gen_server:call(issue_tracking_api, {get_list}),
   {ok, Req2} = cowboy_req:reply(200,
-    [{<<"content-type">>, <<"application/json">>}],
+    [{<<"content-type">>, <<"application/json">>},{<<"Access-Control-Allow-Origin">>, <<"*">>}],
     Payload,
     Req
   ),

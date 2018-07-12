@@ -18,7 +18,8 @@
 -record(issue, {
               id,
               title,
-              content
+              content,
+              created
 %%              reply
             }).
 
