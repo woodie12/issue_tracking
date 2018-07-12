@@ -1,7 +1,7 @@
 issue_tracking
 =====
 
-An OTP application
+erlang restapi + mnesia database + vue.js front end => issue tracking system
 
 Build
 -----
