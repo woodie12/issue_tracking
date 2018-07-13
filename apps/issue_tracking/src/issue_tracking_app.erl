@@ -28,10 +28,18 @@ start(_StartType, _StartArgs) ->
     Dispatch = cowboy_router:compile([
         %% {HostMatch, list({PathMatch, Handler, Opts})}
         {'_', [
+
+            {"/", cowboy_static, {priv_file, issue_tracking, "index.html"}},
+            {"/js/[...]", cowboy_static, {priv_dir, issue_tracking, "js"}},
+            {"/css/[...]", cowboy_static, {priv_dir, issue_tracking, "css"}},
+%%
+%%            {"/[...]", cowboy_static, {priv_dir, issue_tracking, "static",
+%%                [{mimetypes, cow_mimetypes, all}]}},
             {"/issues/list", handle_list, []},
             {"/issues_set/add", handle_set, []},
             {"/issues/:issueid", handle_get, []},
             {"/issues_delete/:issueid", handle_delete, []}
+
         ]}
     ]),
     %% Name, NbAcceptors, TransOpts, ProtoOpts

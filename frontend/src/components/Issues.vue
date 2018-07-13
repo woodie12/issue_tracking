@@ -75,7 +75,7 @@
     }),
     mounted () {
       this.axios
-        .get('http://localhost:3000/issues/list')
+        .get('/issues/list')
         .then((response) => {
           console.log("data is ", response.data)
           this.items = response.data
@@ -86,11 +86,11 @@
       handle_delete: function (id) {
         console.log(id)
         this.axios
-          .get('http://localhost:3000/issues_delete/'+id)
+          .get('/issues_delete/'+id)
           .then((response) => {
-            console.log("data is ", response.data,'http://localhost:3000/issues_delete/'+id)
+            console.log("data is ", response.data,'/issues_delete/'+id)
             this.axios
-              .get('http://localhost:3000/issues/list')
+              .get('/issues/list')
               .then((response) => {
                 console.log("data is ", response.data)
                 this.items = response.data

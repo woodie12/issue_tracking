@@ -53,7 +53,7 @@
         const body = {"title": this.input.title, "content": this.input.content}
         console.log(JSON.stringify(body))
         this.axios.
-        post('http://localhost:3000/issues_set/add',
+        post('/issues_set/add',
           JSON.stringify(body))
           .then(response => {
             console.log(response)
