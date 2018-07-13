@@ -13,3 +13,11 @@ Build
 npm run build // vue generate a dist file
 
 copy dir to rebar's src and set static handler in app.erl
+
+## run the web 
+-----
+    
+    rebar3 shell 
+    
+go to 
+http://localhost:3000/
